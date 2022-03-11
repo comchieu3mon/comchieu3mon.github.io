@@ -9,7 +9,7 @@
     
     <title>
         
-            Hello World |
+            ReacJS 101 |
         
         Duc Cao
     </title>
@@ -133,7 +133,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">Hello World</span>
+            <span class="title-hover-animation">ReacJS 101</span>
         </div>
 
         
@@ -152,8 +152,8 @@
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
         <i class="fas fa-edit"></i>&nbsp;
-        <span class="pc">2022-03-10 17:04:08</span>
-        <span class="mobile">2022-03-10 17:04</span>
+        <span class="pc">2022-03-11 14:37:06</span>
+        <span class="mobile">2022-03-11 14:37</span>
     </span>
     
     
@@ -170,7 +170,30 @@
         
 
         <div class="article-content markdown-body">
-            <h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1>
+            <h1 id="ReactJS-Hook"><a href="#ReactJS-Hook" class="headerlink" title="ReactJS Hook"></a>ReactJS Hook</h1><h1 id="useState"><a href="#useState" class="headerlink" title="useState"></a>useState</h1><figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">Counter</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = <span class="title class_">React</span>.<span class="title function_">useState</span>(<span class="number">0</span>)</span><br><span class="line">  <span class="keyword">const</span> <span class="title function_">increment</span> = (<span class="params"></span>) =&gt; <span class="title function_">setCount</span>(count + <span class="number">1</span>)</span><br><span class="line">  <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;increment&#125;</span>&gt;</span>&#123;count&#125;<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>React.useState</code> is a function that accepts a single argument. That argument<br>is the initial state for the instance of the component.</li>
+<li>Common convention is to choose a name for the state variable, then<br>prefix <code>set</code>in front of that for the updater function.</li>
+<li>State can be defined as: data that changes over time.</li>
+<li>When we call setCount(value) that tells React to re-render our component. When<br>it does this, the entire <code>Counter</code> function is re-run, so<br>when <code>React.useState</code>is called this time, the value we get back is the value<br>that we called <code>setCount</code> with.</li>
+</ul>
+<h1 id="useEffect"><a href="#useEffect" class="headerlink" title="useEffect"></a>useEffect</h1><p><code>React.useEffect</code> is a built-in hook that allows you to run some custom code<br>after React renders (and re-renders) your component to the DOM. It accepts a<br>callback function which React will call after the DOM has been updated</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">React</span>.<span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// your side-effect code here.</span></span><br><span class="line">  <span class="comment">// interact with localstorage</span></span><br><span class="line">  <span class="comment">// this is where you can make HTTP requests or interact with browser APIs.</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>The callback we’re passing to <code>React.useEffect</code> is called after <em>every</em> render<br>of our component (including re-renders). This is exactly what we want because<br>we want to make sure that the <code>name</code> is saved into localStorage whenever it<br>changes, but there are various reasons a component can be re-rendered (for<br>example, when a parent component in the application tree gets re-rendered).</li>
+<li>Really, we <em>only</em> want localStorage to get updated when the <code>name</code> state<br>actually changes. It doesn’t need to re-run any other time. Luckily for<br>us, <code>React.useEffect</code> allows you to pass a second argument called the<br>“dependency array” which signals to React that your effect callback function<br>should be called when (and only when) those dependencies change. So we can use<br>this to avoid doing unnecessary work!</li>
+</ul>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title class_">React</span>.<span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="variable language_">window</span>.<span class="property">localStorage</span>.<span class="title function_">setItem</span>(<span class="string">&#x27;name&#x27;</span>, name)</span><br><span class="line">&#125;, [name])</span><br></pre></td></tr></table></figure>
+
+<h1 id="Lazy-Initialization"><a href="#Lazy-Initialization" class="headerlink" title="Lazy Initialization"></a>Lazy Initialization</h1><p>Right now, every time our component function is run, our function reads from<br>localStorage. This is problematic because it could be a performance bottleneck<br>(reading from localStorage can be slow). And what’s more we only actually need<br>to know the value from localStorage the first time this component is rendered!<br>So the additional reads are wasted effort.</p>
+<p>To avoid this problem, React’s useState hook allows you to pass a function<br>instead of the actual value, and then it will only call that function to get the<br>state value when the component is rendered the first time. So you can go from<br>this: <code>React.useState(someExpensiveComputation())</code> To<br>this: <code>React.useState(() =&gt; someExpensiveComputation())</code></p>
+<p>And the <code>someExpensiveComputation</code> function will only be called when it’s<br>needed!</p>
+<blockquote>
+<p><a class="link"   target="_blank" rel="noopener" href="https://kentcdodds.com/blog/use-state-lazy-initialization-and-function-updates" >https://kentcdodds.com/blog/use-state-lazy-initialization-and-function-updates<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+
         </div>
 
         
@@ -180,21 +203,21 @@
         
             <div class="article-nav">
                 
-                    <div class="article-prev">
-                        <a class="prev"
-                           rel="prev"
-                           href="/2022/03/11/ReacJS-101/"
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/03/10/Hello-World/"
                         >
-                            <span class="left arrow-icon flex-center">
-                              <i class="fas fa-chevron-left"></i>
-                            </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">ReacJS 101</span>
-                                <span class="post-nav-item">Prev posts</span>
+                                <span class="post-nav-title-item">Hello World</span>
+                                <span class="post-nav-item">Next posts</span>
+                            </span>
+                            <span class="right arrow-icon flex-center">
+                              <i class="fas fa-chevron-right"></i>
                             </span>
                         </a>
                     </div>
-                
                 
             </div>
         
